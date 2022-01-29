@@ -1,0 +1,20 @@
+[workspace]
+default-members = [
+    "./pkg/id-cli"
+]
+
+members = [
+    "./pkg/id-cli",
+
+    "./lib/id-lib"
+]
+
+[workspace.metadata.workspaces]
+version = "0.0.1"
+
+[profile.release]
+overflow-checks = true
+
+[profile.dev.package.rand]
+opt-level = 3
+
