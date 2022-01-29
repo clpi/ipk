@@ -1,24 +1,28 @@
 version := "0.0.1"
 output  := "./target/debug/id-cli"
 
+alias r := run
+# alias t := test
+# alias c := check
+alias A := add
+alias b := build
 
 default: run
 
 run:
     cargo run -p id-cli
 
-add CRATE:
-    @echo "\x1b[32;1mAdding {{CRATE}}..."
-    cargo add -p id-cli {{CRATE}}
+build +PACKAGE="id-cli":
+    cargo build -p {{PACKAGE}}
 
-addp PACKAGE CRATE:
-    cargo add -p {{PACKAGE}} {{CRATE}}
+publish:
+  #!/usr/bin/env zsh
+  set -euxo pipefail
+  rm -rf ./target/release
 
-addpf PACKAGE CRATE FEATURES:
+add PACKAGE='id-cli' CRATE='' +FEATURES='':
+    @echo "\x1b[32;1mAdding {{CRATE}}\x1b[35;1m {{FEATURES}}\x1b[0m to\x1b[35;1m {{PACKAGE}}..."
     cargo add -p {{PACKAGE}} {{CRATE}} --features {{FEATURES}}
-
-add-cli CRATE FEATURES:
-    cargo add -p {{CRATE}} --features {{FEATURES}}
 
 test-pkg PACKAGE:
     @echo "\x1b[33;1mRunning {{PACKAGE}} tests... \x1b[0m"

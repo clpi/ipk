@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use clap::{Parser, ValueHint, AppSettings, ArgSettings};
-use crate::{CliError, CliResult, Cmd};
+use crate::{Config, CliError, CliResult, config, Cmd};
 
 #[derive(Debug, Parser)]
 #[clap()]
@@ -11,7 +11,7 @@ pub struct ReplCmd {
 
 }
 impl Cmd for ReplCmd {
-    fn exec(&self) -> CliResult<()> {
+    fn exec(&self, config: &mut config::Config) -> CliResult<()> {
         println!("\x1b[33;1mExecuting Repl cmd...");
         
         Ok(())

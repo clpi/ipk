@@ -1,12 +1,14 @@
 use std::path::PathBuf;
 
 use clap::{Subcommand, Parser, ArgSettings, AppSettings, ValueHint};
-use crate::{Cmd, CliResult, CliError};
+use crate::{error::PkgError, pkg::{PkgType, Pkg, PkgConfig}, Config, Cmd, CliResult, CliError};
 
 #[derive(Parser, Debug)]
 pub struct InitCmd {
     #[clap(required = false)]
     name: Option<String>,
+    #[clap(short = 't', long = "type", required = false)]
+    pkg_type: Option<PkgType>,
     #[clap(short, long, required = false)]
     dir: Option<PathBuf>,
 }
@@ -29,14 +31,26 @@ impl InitCmd{
         std::io::stdin().read_line(&mut nm)?;
         Ok(nm)
     }
+
+    fn is_pkg(dir: PathBuf, config: &Config) -> bool {
+        if dir.is_dir() && dir.join(config.pkg_cfg_file()).is_file() { true }
+        else { false }
+    }
+    fn create_pkg(&self, cfg: &mut Config) -> CliResult<Pkg> {
+        let (dir, name) = self.dir_name();
+        println!("\x1b[35;1mCreating package:\x1b[0m\nDir: {:#?}\n Name {:?}...", dir, name);
+        let pk = cfg.create_pkg(dir, name)?;
+        return Ok(pk)
+    }
 }
 impl Cmd for InitCmd {
 
-    fn exec(&self) -> CliResult<()> {
-        let (dir, name) = self.dir_name();
-        let config_tgt = dir.join("Idla.pkg.toml");
-        println!("\x1b[35;1mExecuting init:\x1b[0m\nDir: {:?}\n Name {:?}\nConf: {:?} ...", 
-            &dir.to_str(), &name, &config_tgt.to_str());
+    fn exec(&self, config: &mut Config) -> CliResult<()> {
+        let (d, n) = self.dir_name();
+        if Self::is_pkg(d.clone(), &config) {
+            return Err(CliError::Pkg(PkgError::AlreadyExists(d.clone())))
+        } 
+        let pkg = self.create_pkg(config)?;
         Ok(())
     }
 }
@@ -44,6 +58,6 @@ impl Cmd for InitCmd {
 impl Default for InitCmd {
     fn default() -> Self {
         let cwd = std::env::current_dir().unwrap_or(PathBuf::from("~/"));
-        InitCmd { dir: Some(cwd), name: None }
+        InitCmd { dir: Some(cwd), pkg_type: Some(PkgType::Bin), name: None }
     }
 }

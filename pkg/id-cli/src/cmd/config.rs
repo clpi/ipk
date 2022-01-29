@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use clap::{Parser, ValueHint, AppSettings, ArgSettings};
-use crate::{CliError, CliResult, Cmd};
+use crate::{Config, CliError, CliResult, Cmd};
 
 #[derive(Debug, Parser)]
 #[clap()]
@@ -11,7 +11,7 @@ pub struct CfgCmd {
 
 }
 impl Cmd for CfgCmd {
-    fn exec(&self) -> CliResult<()> {
+    fn exec(&self, config: &mut Config) -> CliResult<()> {
         println!("\x1b[33;1mExecuting Cfg cmd...");
         
         Ok(())

@@ -17,17 +17,15 @@ pub use self::{
 };
 
 pub trait Cmd: Parser + Default {
-    fn with_config(cfg: Config) -> Self {
-        return Self::parse();
-    }
     fn get() -> Self { Self::parse() }    
-    fn exec(&self) -> CliResult<()> {
+    fn exec(&self, config: &mut Config) -> CliResult<()> {
         Ok(())
     }
 }
 
+/// Root command
 #[derive(Debug, Parser)]
-#[clap()]
+#[clap(name = "idc", author, version, about, long_about = None)]
 pub struct RootCmd {
     #[clap(short, long)]
     debug: bool,
@@ -37,17 +35,17 @@ pub struct RootCmd {
     cmd: Option<RootSubCmd>,
 }
 impl Cmd for RootCmd {
-    fn exec(&self) -> CliResult<()> {
+    fn exec(&self, config: &mut Config) -> CliResult<()> {
         println!("\x1b[32;1mRoot cmd executing...");
         let res: RootCmd = Self::parse();
         match res.cmd {
-            Some(RootSubCmd::Help(hc)) => hc.exec(),
-            Some(RootSubCmd::Build(bc)) => bc.exec(),
-            Some(RootSubCmd::Init(ic)) => ic.exec(),
-            Some(RootSubCmd::Config(cc)) => cc.exec(),
-            Some(RootSubCmd::Run(rc)) => rc.exec(),
-            Some(RootSubCmd::Repl(rc)) => rc.exec(),
-            None => HelpCmd::default().exec()
+            Some(RootSubCmd::Help(hc)) => hc.exec(config),
+            Some(RootSubCmd::Build(bc)) => bc.exec(config),
+            Some(RootSubCmd::Init(ic)) => ic.exec(config),
+            Some(RootSubCmd::Config(cc)) => cc.exec(config),
+            Some(RootSubCmd::Run(rc)) => rc.exec(config),
+            Some(RootSubCmd::Repl(rc)) => rc.exec(config),
+            None => HelpCmd::default().exec(config)
         }
     }
 }

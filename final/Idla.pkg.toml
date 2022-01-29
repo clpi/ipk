@@ -1,0 +1,6 @@
+name = 'final'
+pkg_type = 'Bin'
+idla_release = '2022'
+version = '0.0.1'
+
+[deps]

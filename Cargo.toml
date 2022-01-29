@@ -6,6 +6,7 @@ default-members = [
 members = [
     "./pkg/id-cli",
 
+    "./lib/id-data",
     "./lib/id-lib"
 ]
 

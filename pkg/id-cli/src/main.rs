@@ -7,11 +7,10 @@ pub(crate) mod error;
 
 pub use pkg::PkgConfig;
 pub use error::{CliError, CliResult};
-pub use cmd::Cmd;
+pub use self::{cmd::Cmd, config::Config};
 
 fn main() -> CliResult<()> {
-    let conf = config::Config::get()?;
-    let cmd = cmd::RootCmd::with_config(conf);
-    cmd.exec()?;
+    let cmd = cmd::RootCmd::get();
+    cmd.exec(&mut config::Config::get()?)?;
     Ok(())
 }

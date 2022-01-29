@@ -1,4 +1,4 @@
-use crate::{Cmd, CliResult, cmd::RootCmd};
+use crate::{Config, Cmd, CliResult, cmd::RootCmd};
 use clap::{Parser, AppSettings, ArgSettings, App, IntoApp};
 
 #[derive(Debug, clap::Parser)]
@@ -7,7 +7,7 @@ pub struct HelpCmd {
 }
 
 impl Cmd for HelpCmd {
-    fn exec(&self) -> CliResult<()> {
+    fn exec(&self, config: &mut Config) -> CliResult<()> {
         println!("\x1b[35;1mHelp cmd executing...\x1b[0m");
         match self.cmd {
             None => HelpCmd::root(),
